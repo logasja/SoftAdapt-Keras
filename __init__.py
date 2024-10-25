@@ -1,3 +1,3 @@
 """First level import of the package."""
 
-from softadapt_keras import *  # noqa: F403
+from softadapt import *  # noqa: F403

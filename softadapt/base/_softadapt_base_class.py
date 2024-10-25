@@ -1,8 +1,8 @@
 """Implementaion of the base class for SoftAdapt."""
 
 from keras import ops, KerasTensor
-from softadapt_keras.constants._stability_constants import _EPSILON
-from softadapt_keras.utilities._finite_difference import _get_finite_difference
+from softadapt.constants._stability_constants import _EPSILON
+from softadapt.utilities._finite_difference import _get_finite_difference
 
 
 class SoftAdaptBase:

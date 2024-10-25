@@ -4,7 +4,7 @@
 import os
 
 os.environ["KERAS_BACKEND"] = "torch"
-from softadapt_keras import SoftAdapt
+from softadapt import SoftAdapt
 from keras import ops
 import unittest
 

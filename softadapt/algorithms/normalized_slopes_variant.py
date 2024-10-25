@@ -1,7 +1,7 @@
 """Implementaion of the slope-normalized variant of SoftAdapt."""
 
 from keras import ops, KerasTensor
-from softadapt_keras.base._softadapt_base_class import SoftAdaptBase
+from softadapt.base._softadapt_base_class import SoftAdaptBase
 from typing import Tuple
 
 

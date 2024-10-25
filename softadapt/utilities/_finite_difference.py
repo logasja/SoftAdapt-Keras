@@ -2,7 +2,7 @@
 
 import numpy
 from findiff import coefficients
-from softadapt_keras.constants._finite_difference_constants import (
+from softadapt.constants._finite_difference_constants import (
     _FIRST_ORDER_COEFFICIENTS,
     _THIRD_ORDER_COEFFICIENTS,
     _FIFTH_ORDER_COEFFICIENTS,

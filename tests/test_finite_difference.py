@@ -6,7 +6,7 @@ import os
 
 os.environ["KERAS_BACKEND"] = "torch"
 
-from softadapt_keras.utilities._finite_difference import _get_finite_difference
+from softadapt.utilities._finite_difference import _get_finite_difference
 
 
 class TestFiniteDifference(unittest.TestCase):
