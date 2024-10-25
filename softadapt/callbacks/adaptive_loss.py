@@ -18,11 +18,11 @@ class AdaptiveLossCallback(callbacks.Callback):
         
         self.frequency = frequency
         self.order = components
-        self.weights = Variable(initializer=weights, trainable=False)
+        self.weights = [Variable(initializer=w, trainable=False, name=c) for c, w in zip(components, weights)]
         self.components_history = [[] for _ in components]
     
     @property
-    def variable_weights(self) -> Variable:
+    def variable_weights(self) -> list[Variable]:
         return self.weights
 
     def on_epoch_end(self, epoch, logs=None):
@@ -37,7 +37,8 @@ class AdaptiveLossCallback(callbacks.Callback):
                 verbose=False
             )
 
-            self.weights.assign(adapt_weights)
+            for w, new_w in zip(self.weights, adapt_weights):
+                w.assign(new_w)
             
             for h in self.components_history:
                 if self.frequency == "epoch":   # In the case of an epoch-wise evaluation, the most recent loss value is retained

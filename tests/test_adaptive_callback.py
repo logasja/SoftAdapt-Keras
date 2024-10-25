@@ -22,7 +22,8 @@ class TestAdaptiveLossCallback(unittest.TestCase):
         # Test if the callback initializes correctly
         self.assertEqual(self.callback.order, self.components)
         self.assertTrue(isinstance(self.callback.algorithm, SoftAdapt))
-        self.assertTrue(np.array_equal(self.callback.variable_weights.numpy(), self.weights))
+        self.assertTrue(np.array_equal(ops.convert_to_numpy(self.callback.variable_weights[0]), self.weights[0]))
+        self.assertTrue(np.array_equal(ops.convert_to_numpy(self.callback.variable_weights[1]), self.weights[1]))
         self.assertEqual(self.callback.frequency, 'epoch')
         self.assertEqual(len(self.callback.components_history), len(self.components))
 
