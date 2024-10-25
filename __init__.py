@@ -1,3 +1,6 @@
+# ruff: noqa: F403
+# ruff: noqa: F401
 """First level import of the package."""
 
-from softadapt import *  # noqa: F403
+from softadapt import *
+import callbacks
