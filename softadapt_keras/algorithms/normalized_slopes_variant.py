@@ -1,14 +1,14 @@
-"""Implementaion of the loss-weighted variant of SoftAdapt."""
+"""Implementaion of the slope-normalized variant of SoftAdapt."""
 
-import torch
-from ..base._softadapt_base_class import SoftAdaptBase
+from keras import ops, KerasTensor
+from softadapt_keras.base._softadapt_base_class import SoftAdaptBase
 from typing import Tuple
 
 
-class LossWeightedSoftAdapt(SoftAdaptBase):
-    """Class implementation of the loss-weighted SoftAdapt variant.
+class NormalizedSoftAdapt(SoftAdaptBase):
+    """The normalized-slopes variant class.
 
-    The loss-weighted variant of SoftAdapt is described in section 3.1.1 of our
+    The normalized variant of SoftAdapt is described in section 3.1.3 of our
     manuscript (located at: https://arxiv.org/pdf/1912.12355.pdf).
 
     Attributes:
@@ -20,6 +20,7 @@ class LossWeightedSoftAdapt(SoftAdaptBase):
 
         accuracy_order: An integer indicating the accuracy order of the finite
           volume approximation of each loss component's slope.
+
     """
 
     def __init__(self, beta: float = 0.1, accuracy_order: int = None):
@@ -30,9 +31,9 @@ class LossWeightedSoftAdapt(SoftAdaptBase):
         # accuracy in the finite difference approximation.
         self.accuracy_order = accuracy_order
 
-    def get_component_weights(self,
-                               *loss_component_values: Tuple[torch.tensor],
-                               verbose: bool = True):
+    def get_component_weights(
+        self, *loss_component_values: Tuple[KerasTensor], verbose: bool = True
+    ):
         """Class method for SoftAdapt weights.
 
         Args:
@@ -53,24 +54,24 @@ class LossWeightedSoftAdapt(SoftAdaptBase):
 
         """
         if len(loss_component_values) == 1:
-            print("==> Warning: You have only passed on the values of one loss"
-                  " component, which will result in trivial weighting.")
+            print(
+                "==> Warning: You have only passed on the values of one loss"
+                " component, which will result in trivial weighting."
+            )
 
         rates_of_change = []
-        average_loss_values = []
 
         for loss_points in loss_component_values:
             # Compute the rates of change for each one of the loss components.
             rates_of_change.append(
-                self._compute_rates_of_change(loss_points,
-                                              self.accuracy_order,
-                                              verbose=verbose))
-            average_loss_values.append(torch.mean(loss_points.float()))
+                self._compute_rates_of_change(
+                    loss_points, self.accuracy_order, verbose=verbose
+                )
+            )
 
-        rates_of_change = torch.tensor(rates_of_change)
-        average_loss_values = torch.tensor(average_loss_values)
+        rates_of_change = ops.convert_to_tensor(rates_of_change) / ops.sum(
+            ops.convert_to_tensor(rates_of_change)
+        )
+
         # Calculate the weight and return the values.
-        return self._softmax(input_tensor=rates_of_change,
-                             beta=self.beta,
-                             numerator_weights = average_loss_values,
-                             )
+        return self._softmax(input_tensor=rates_of_change, beta=self.beta)

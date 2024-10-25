@@ -1,11 +1,11 @@
 """Implementaion of the base class for SoftAdapt."""
 
-import torch
-from ..constants._stability_constants import _EPSILON
-from ..utilities._finite_difference import _get_finite_difference
+from keras import ops, KerasTensor
+from softadapt_keras.constants._stability_constants import _EPSILON
+from softadapt_keras.utilities._finite_difference import _get_finite_difference
 
 
-class SoftAdaptBase():
+class SoftAdaptBase:
     """Base model for any of the SoftAdapt variants.
 
     Attributes:
@@ -18,11 +18,13 @@ class SoftAdaptBase():
         """Initializer of the base method."""
         self.epsilon = _EPSILON
 
-    def _softmax(self,
-                 input_tensor: torch.tensor,
-                 beta: float = 1,
-                 numerator_weights: torch.tensor = None,
-                 shift_by_max_value: bool = True):
+    def _softmax(
+        self,
+        input_tensor: KerasTensor,
+        beta: float = 1,
+        numerator_weights: KerasTensor = None,
+        shift_by_max_value: bool = True,
+    ):
         """Implementation of SoftAdapt's modified softmax function.
 
         Args:
@@ -44,21 +46,19 @@ class SoftAdaptBase():
 
         """
         if shift_by_max_value:
-            exp_of_input = torch.exp(beta * (input_tensor - input_tensor.max()))
+            exp_of_input = ops.exp(beta * (input_tensor - ops.max(input_tensor)))
         else:
-            exp_of_input = torch.exp(beta * input_tensor)
+            exp_of_input = ops.exp(beta * input_tensor)
 
         # This option will be used for the "loss-weighted" variant of SoftAdapt.
         if numerator_weights is not None:
-            exp_of_input = torch.multiply(numerator_weights, exp_of_input)
+            exp_of_input = ops.multiply(numerator_weights, exp_of_input)
 
-        return exp_of_input / (torch.sum(exp_of_input) + self.epsilon)
+        return exp_of_input / (ops.sum(exp_of_input) + self.epsilon)
 
-
-    def _compute_rates_of_change(self,
-                                 input_tensor:torch.tensor,
-                                 order: int = 5,
-                                 verbose: bool = True):
+    def _compute_rates_of_change(
+        self, input_tensor: KerasTensor, order: int = 5, verbose: bool = True
+    ):
         """Base class method for computing loss functions rate of change.
 
         Args:
@@ -78,6 +78,6 @@ class SoftAdaptBase():
             None.
 
         """
-        return _get_finite_difference(input_array = input_tensor.numpy(),
-                                      order = order,
-                                      verbose = verbose)
+        return _get_finite_difference(
+            input_array=ops.convert_to_numpy(input_tensor), order=order, verbose=verbose
+        )

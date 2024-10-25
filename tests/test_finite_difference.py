@@ -1,7 +1,12 @@
+# ruff: noqa: E402
 """Unit testing for calculating finite difference approximations."""
-import unittest
 
-from softadapt.utilities._finite_difference import _get_finite_difference
+import unittest
+import os
+
+os.environ["KERAS_BACKEND"] = "torch"
+
+from softadapt_keras.utilities._finite_difference import _get_finite_difference
 
 
 class TestFiniteDifference(unittest.TestCase):
@@ -20,8 +25,10 @@ class TestFiniteDifference(unittest.TestCase):
             1,
             approximation,
             self.decimal_place,
-            ("Incorrect first order approximation for "
-             "simple positive slope test case."),
+            (
+                "Incorrect first order approximation for "
+                "simple positive slope test case."
+            ),
         )
 
     def test_second_order_positive_slope(self):
@@ -32,8 +39,10 @@ class TestFiniteDifference(unittest.TestCase):
             1,
             approximation,
             self.decimal_place,
-            ("Incorrect second order approximation for "
-             "simple negative slope test case."),
+            (
+                "Incorrect second order approximation for "
+                "simple negative slope test case."
+            ),
         )
 
     def test_third_order_positive_slope(self):
@@ -44,8 +53,10 @@ class TestFiniteDifference(unittest.TestCase):
             2,
             approximation,
             self.decimal_place,
-            ("Incorrect third order approximation for "
-             "simple positive slope test case."),
+            (
+                "Incorrect third order approximation for "
+                "simple positive slope test case."
+            ),
         )
 
     def test_fourth_order_positive_slope(self):
@@ -56,8 +67,10 @@ class TestFiniteDifference(unittest.TestCase):
             2,
             approximation,
             self.decimal_place,
-            ("Incorrect fourth order approximation for "
-             "simple positive slope test case."),
+            (
+                "Incorrect fourth order approximation for "
+                "simple positive slope test case."
+            ),
         )
 
     def test_fifth_order_positive_slope(self):
@@ -68,8 +81,10 @@ class TestFiniteDifference(unittest.TestCase):
             1,
             approximation,
             self.decimal_place,
-            ("Incorrect fifth order approximation for "
-             "simple positive slope test case."),
+            (
+                "Incorrect fifth order approximation for "
+                "simple positive slope test case."
+            ),
         )
 
     def test_tenth_order_positive_slope(self):
@@ -80,11 +95,13 @@ class TestFiniteDifference(unittest.TestCase):
             1,
             approximation,
             self.decimal_place,
-            ("Incorrect 10th order approximation for "
-             "simple positive slope test case."),
+            (
+                "Incorrect 10th order approximation for "
+                "simple positive slope test case."
+            ),
         )
 
-    #From here on we have negative slope test cases.
+    # From here on we have negative slope test cases.
     def test_first_order_negative_slope(self):
         order = 1
         loss_points = [15, 12, 9, 6, 3, 0]
@@ -93,8 +110,10 @@ class TestFiniteDifference(unittest.TestCase):
             -3,
             approximation,
             self.decimal_place,
-            ("Incorrect first order approximation for "
-             "simple negative slope test case."),
+            (
+                "Incorrect first order approximation for "
+                "simple negative slope test case."
+            ),
         )
 
     def test_second_order_negative_slope(self):
@@ -105,8 +124,10 @@ class TestFiniteDifference(unittest.TestCase):
             -1,
             approximation,
             self.decimal_place,
-            ("Incorrect second order approximation for "
-             "simple negative slope test case."),
+            (
+                "Incorrect second order approximation for "
+                "simple negative slope test case."
+            ),
         )
 
     def test_third_order_negative_slope(self):
@@ -117,8 +138,10 @@ class TestFiniteDifference(unittest.TestCase):
             -4,
             approximation,
             self.decimal_place,
-            ("Incorrect third order approximation for "
-             "simple negative slope test case."),
+            (
+                "Incorrect third order approximation for "
+                "simple negative slope test case."
+            ),
         )
 
     def test_fourth_order_negative_slope(self):
@@ -129,8 +152,10 @@ class TestFiniteDifference(unittest.TestCase):
             -1,
             approximation,
             self.decimal_place,
-            ("Incorrect fourth order approximation for "
-             "simple negative slope test case."),
+            (
+                "Incorrect fourth order approximation for "
+                "simple negative slope test case."
+            ),
         )
 
     def test_fifth_order_negative_slope(self):
@@ -141,8 +166,10 @@ class TestFiniteDifference(unittest.TestCase):
             -1,
             approximation,
             self.decimal_place,
-            ("Incorrect fifth order approximation for "
-             "simple negative slope test case."),
+            (
+                "Incorrect fifth order approximation for "
+                "simple negative slope test case."
+            ),
         )
 
     def test_tenth_order_negative_slope(self):
@@ -153,8 +180,10 @@ class TestFiniteDifference(unittest.TestCase):
             -1,
             approximation,
             self.decimal_place,
-            ("Incorrect 10th order approximation for "
-             "simple negative slope test case."),
+            (
+                "Incorrect 10th order approximation for "
+                "simple negative slope test case."
+            ),
         )
 
     # TODO: Add more sophisticated unit tests

@@ -1,13 +1,17 @@
-"""Internal implementation of """
+"""Internal implementation of"""
+
 import numpy
 from findiff import coefficients
-from ..constants._finite_difference_constants import (_FIRST_ORDER_COEFFICIENTS,
-                        _THIRD_ORDER_COEFFICIENTS, _FIFTH_ORDER_COEFFICIENTS)
+from softadapt_keras.constants._finite_difference_constants import (
+    _FIRST_ORDER_COEFFICIENTS,
+    _THIRD_ORDER_COEFFICIENTS,
+    _FIFTH_ORDER_COEFFICIENTS,
+)
 
 
-def _get_finite_difference(input_array: numpy.array,
-                           order: int = None,
-                           verbose: bool = True):
+def _get_finite_difference(
+    input_array: numpy.array, order: int = None, verbose: bool = True
+):
     """Internal utility method for estimating rate of change.
 
     This function aims to approximate the rate of change for a loss function,
@@ -44,27 +48,35 @@ def _get_finite_difference(input_array: numpy.array,
     if order is None:
         order = len(input_array) - 1
         if verbose:
-            print(f"==> Interpreting finite difference order as {order} since"
-                  "no explicit order was specified.")
+            print(
+                f"==> Interpreting finite difference order as {order} since"
+                "no explicit order was specified."
+            )
     else:
         if order > len(input_array):
-            raise ValueError("The order of finite difference computations can"
-                             "not be larger than the number of loss points. "
-                             "Please check the order argument or wait until "
-                             "enough points have been stored before calling the"
-                             " method.")
+            raise ValueError(
+                "The order of finite difference computations can"
+                "not be larger than the number of loss points. "
+                "Please check the order argument or wait until "
+                "enough points have been stored before calling the"
+                " method."
+            )
         elif order + 1 < len(input_array):
-            print(f"==> There are more points than 'order' + 1 ({order + 1}) "
-                  f"points (array contains {len(input_array)} values). Function"
-                  f"will use the last {order} elements of loss points for "
-                  "computations.")
-            input_array = input_array[(-1*order - 1):]
+            print(
+                f"==> There are more points than 'order' + 1 ({order + 1}) "
+                f"points (array contains {len(input_array)} values). Function"
+                f"will use the last {order} elements of loss points for "
+                "computations."
+            )
+            input_array = input_array[(-1 * order - 1) :]
 
     order_is_even = order % 2 == 0
     # Next, we want to retrieve the correct coefficients based on the order
     if order > 5 and not order_is_even:
-        raise ValueError("Accuracy orders larger than 5 must be even. Please "
-                         "check the arguments passed to the function.")
+        raise ValueError(
+            "Accuracy orders larger than 5 must be even. Please "
+            "check the arguments passed to the function."
+        )
 
     if order_is_even:
         constants = coefficients(deriv=1, acc=order)["forward"]["coefficients"]
