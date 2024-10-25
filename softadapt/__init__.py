@@ -8,6 +8,7 @@ from softadapt.algorithms import (
 )
 from softadapt.constants import _finite_difference_constants, _stability_constants
 from softadapt.utilities import _finite_difference
+import softadapt.callbacks
 
 # # adding package information and version
 # try:

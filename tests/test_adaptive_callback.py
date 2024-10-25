@@ -8,7 +8,7 @@ from softadapt.algorithms import (
 )
 
 # Assuming AdaptiveLossCallback is defined in a module named adaptive_loss_callback
-from callbacks.adaptive_loss import AdaptiveLossCallback
+from softadapt.callbacks import AdaptiveLossCallback
 
 class TestAdaptiveLossCallback(unittest.TestCase):
 
