@@ -1,3 +1,6 @@
+import os
+
+os.environ["KERAS_BACKEND"] = "torch"
 import unittest
 import numpy as np
 from keras import backend as K, ops
@@ -39,13 +42,28 @@ class TestAdaptiveLossCallback(unittest.TestCase):
         # Check if weights are updated (mocking the algorithm's behavior)
         # Here we would need to mock the get_component_weights method
         # For simplicity, let's assume it returns [0.6, 0.4]
-        self.callback.algorithm.get_component_weights = lambda x, verbose: np.array([0.6, 0.4])
+        self.callback.algorithm.get_component_weights = lambda *x, verbose: np.array([0.6, 0.4])
         self.callback.on_epoch_end(epoch=1, logs=logs)
 
         print(ops.convert_to_numpy(self.callback.variable_weights))
 
         # Check if the weights have been updated
         self.assertTrue(np.allclose(ops.convert_to_numpy(self.callback.variable_weights), [0.6, 0.4]))
+
+    def test_true_epoch_end_updates_weights(self):
+        # Simulate logs for the end of an epoch
+        logs = {'loss1': 0.2, 'loss2': 0.3}
+        self.callback.on_epoch_end(epoch=0, logs=logs)
+
+        # Check if the component history is updated
+        self.assertEqual(self.callback.components_history[0], [0.2])
+        self.assertEqual(self.callback.components_history[1], [0.3])
+
+        # Check if weights are updated (mocking the algorithm's behavior)
+        self.callback.on_epoch_end(epoch=1, logs=logs)
+
+        # Check if the weights have been updated
+        self.assertTrue(np.allclose(ops.convert_to_numpy(self.callback.variable_weights), [0.5, 0.5]))
 
     def test_on_epoch_end_clears_history(self):
         # Simulate logs for the end of an epoch
@@ -57,7 +75,7 @@ class TestAdaptiveLossCallback(unittest.TestCase):
         self.assertEqual(self.callback.components_history[1], [0.3])
 
         # Call on_epoch_end again to trigger clearing of history
-        self.callback.algorithm.get_component_weights = lambda x, verbose: np.array([0.6, 0.4])
+        self.callback.algorithm.get_component_weights = lambda *x, verbose: np.array([0.6, 0.4])
         logs = {'loss1': 0.5, 'loss2': 0.2}
         self.callback.on_epoch_end(epoch=1, logs=logs)
 
