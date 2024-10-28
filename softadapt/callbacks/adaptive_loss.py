@@ -1,5 +1,5 @@
 from typing import Literal
-from keras import callbacks, ops
+from keras import callbacks, ops, backend as K
 
 from softadapt.algorithms import (
     LossWeightedSoftAdapt,
@@ -41,12 +41,10 @@ class AdaptiveLossCallback(callbacks.Callback):
                 verbose=False
             )
 
-            self.weights = adapt_weights
+            self.weights = ops.cast(adapt_weights, K.floatx())
 
             for h in self.components_history:
                 if self.frequency == "epoch":   # In the case of an epoch-wise evaluation, the most recent loss value is retained
                     h.pop(0)
                 else:
                     h.clear()
-            
-            print("/// New loss weights are:" + str(self.weights) + " for " + str(self.order))
