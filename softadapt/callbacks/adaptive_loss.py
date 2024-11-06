@@ -1,5 +1,7 @@
 from typing import Literal
-from keras import callbacks, ops, backend as K
+from keras import callbacks, ops, backend as K, KerasTensor
+from keras.src.utils import file_utils
+import numpy as np
 
 from softadapt.algorithms import (
     LossWeightedSoftAdapt,
@@ -19,7 +21,8 @@ class AdaptiveLossCallback(callbacks.Callback):
         algorithm: Literal["loss-weighted"]
         | Literal["normalized"]
         | Literal["base"] = "base",
-        calculate_on_validation=False,
+        calculate_on_validation: bool = False,
+        backup_dir: str | None = None,
     ):
         if algorithm == "base":
             self.algorithm = SoftAdapt(beta=beta, accuracy_order=accuracy_order)
@@ -35,9 +38,19 @@ class AdaptiveLossCallback(callbacks.Callback):
         self.frequency = frequency
         self.order = components
         self._weights = weights
-        self.components_history = [[] for _ in components]
+        self.components_history: list[KerasTensor] = [[] for _ in components]
         self.debug = False
         self.val = calculate_on_validation
+        if not backup_dir:
+            raise ValueError("Empty `backup_dir` argument passed")
+        if backup_dir:
+            self.backup_dir = backup_dir
+            self._component_history_path = file_utils.join(
+                backup_dir, "adaptive_loss_metadata.npy"
+            )
+        else:
+            self.backup_dir = None
+            self._component_history_path = None
 
     @property
     def weights(self) -> list[float]:
@@ -46,6 +59,16 @@ class AdaptiveLossCallback(callbacks.Callback):
     @weights.setter
     def weights(self, value):
         self._weights = value
+
+    def on_train_begin(self, logs=None):
+        """Get adaptive loss state from temporary file and restore it."""
+        if self.backup_dir is not None:
+            if file_utils.exists(self._component_history_path):
+                saved_history = np.load(self._component_history_path)
+                self.components_history = [
+                    [ops.convert_to_tensor(i) for i in component]
+                    for component in saved_history
+                ]
 
     def on_epoch_end(self, epoch, logs=None):
         # Update component history in order for weight computation
@@ -73,3 +96,15 @@ class AdaptiveLossCallback(callbacks.Callback):
                     h.pop(0)
                 else:
                     h.clear()
+        if self.backup_dir is not None:
+            if not file_utils.exists(self.backup_dir):
+                file_utils.makedirs(self.backup_dir)
+            np.save(
+                self._component_history_path,
+                np.array(
+                    [
+                        ops.convert_to_numpy(component)
+                        for component in self.components_history
+                    ]
+                ),
+            )

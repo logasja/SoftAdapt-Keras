@@ -1,6 +1,6 @@
 [project]
 name = "softadapt_keras"
-version = "0.0.7"
+version = "0.0.8"
 authors = [
   { name="A. Ali Heydari", email="aliheydari@ucdavis.edu"},
   { name="Jacob Logas", email="logasja@gatech.edu" },
@@ -18,7 +18,7 @@ classifiers = [
 keywords=["Physics-Informed Neural Networks", "Balancing PINNs Loss",
                 "Adaptive-Weighting, Multi-Task-Nerual-Networks Optimization",
                 "Gradient-Descent-Weighting, Machine Learning"]
-dependencies = ["findiff", "keras>=3.0.0"]
+dependencies = ["findiff", "keras>=3.0.0", "numpy"]
 
 [project.urls]
 Homepage = "https://github.com/dr-aheydari/SoftAdapt-Keras"
