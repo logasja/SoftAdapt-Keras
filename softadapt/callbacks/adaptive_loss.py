@@ -88,7 +88,11 @@ class AdaptiveLossCallback(callbacks.Callback):
                 self.components_history[self.order.index(k)].append(ops.copy(logs[k]))
 
         # If the set number of epochs or frequency is met than recompute loss weights
-        if (self.frequency == "epoch" or epoch % self.frequency == 0) and epoch != 0:
+        if (
+            (self.frequency == "epoch" or epoch % self.frequency == 0)
+            and epoch != 0
+            and len(self.components_history) > 2
+        ):
             adapt_weights = self.algorithm.get_component_weights(
                 *ops.convert_to_tensor(self.components_history), verbose=self.debug
             )
