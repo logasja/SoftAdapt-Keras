@@ -1,6 +1,6 @@
 [project]
 name = "softadapt_keras"
-version = "0.1.0"
+version = "0.1.1"
 authors = [
   { name="A. Ali Heydari", email="aliheydari@ucdavis.edu"},
   { name="Jacob Logas", email="logasja@gatech.edu" },

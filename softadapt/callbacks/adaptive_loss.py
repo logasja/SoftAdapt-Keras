@@ -91,7 +91,7 @@ class AdaptiveLossCallback(callbacks.Callback):
         if (
             (self.frequency == "epoch" or epoch % self.frequency == 0)
             and epoch != 0
-            and len(self.components_history) > 2
+            and len(self.components_history[0]) > 1
         ):
             adapt_weights = self.algorithm.get_component_weights(
                 *ops.convert_to_tensor(self.components_history), verbose=self.debug
