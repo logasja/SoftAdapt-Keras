@@ -48,6 +48,9 @@ class AdaptiveLossCallback(callbacks.Callback):
             self._component_history_path = file_utils.join(
                 backup_dir, "adaptive_loss_metadata.npy"
             )
+            self._adaptive_loss_weights_path = file_utils.join(
+                backup_dir, "adaptive_loss_weights.npy"
+            )
         else:
             self.backup_dir = None
             self._component_history_path = None
@@ -69,6 +72,9 @@ class AdaptiveLossCallback(callbacks.Callback):
                     [ops.convert_to_tensor(i) for i in component]
                     for component in saved_history
                 ]
+            if file_utils.exists(self._adaptive_loss_weights_path):
+                saved_weights = np.load(self._adaptive_loss_weights_path)
+                self.weights = ops.convert_to_tensor(saved_weights)
 
     def on_epoch_end(self, epoch, logs=None):
         # Update component history in order for weight computation
@@ -99,6 +105,9 @@ class AdaptiveLossCallback(callbacks.Callback):
         if self.backup_dir is not None:
             if not file_utils.exists(self.backup_dir):
                 file_utils.makedirs(self.backup_dir)
+            np.save(
+                self._adaptive_loss_weights_path, ops.convert_to_numpy(self.weights)
+            )
             np.save(
                 self._component_history_path,
                 np.array(
