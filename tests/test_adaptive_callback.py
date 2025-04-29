@@ -28,8 +28,12 @@ class TestAdaptiveLossCallback(unittest.TestCase):
         # Test if the callback initializes correctly
         assert self.callback.order == self.components
         assert isinstance(self.callback.algorithm, SoftAdapt)
-        assert np.array_equal(ops.convert_to_numpy(self.callback.weights[0]), self.weights[0])
-        assert np.array_equal(ops.convert_to_numpy(self.callback.weights[1]), self.weights[1])
+        assert np.array_equal(
+            ops.convert_to_numpy(self.callback.weights[0]), self.weights[0]
+        )
+        assert np.array_equal(
+            ops.convert_to_numpy(self.callback.weights[1]), self.weights[1]
+        )
         assert self.callback.frequency == "epoch"
         assert len(self.callback.components_history) == len(self.components)
 
@@ -45,7 +49,9 @@ class TestAdaptiveLossCallback(unittest.TestCase):
         # Check if weights are updated (mocking the algorithm's behavior)
         # Here we would need to mock the get_component_weights method
         # For simplicity, let's assume it returns [0.6, 0.4]
-        self.callback.algorithm.get_component_weights = unittest.mock.MagicMock(return_value=np.array([0.6, 0.4]))
+        self.callback.algorithm.get_component_weights = unittest.mock.MagicMock(
+            return_value=np.array([0.6, 0.4])
+        )
         self.callback.on_epoch_end(epoch=1, logs=logs)
 
         # Check if the weights have been updated
@@ -76,7 +82,9 @@ class TestAdaptiveLossCallback(unittest.TestCase):
         assert self.callback.components_history[1] == [0.3]
 
         # Call on_epoch_end again to trigger clearing of history
-        self.callback.algorithm.get_component_weights = unittest.mock.MagicMock(return_value=np.array([0.6, 0.4]))
+        self.callback.algorithm.get_component_weights = unittest.mock.MagicMock(
+            return_value=np.array([0.6, 0.4])
+        )
         logs = {"loss1": 0.5, "loss2": 0.2}
         self.callback.on_epoch_end(epoch=1, logs=logs)
 

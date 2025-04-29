@@ -31,7 +31,9 @@ from softadapt.constants._finite_difference_constants import (
 )
 
 
-def _get_finite_difference(input_array: np.array, order: int | None = None, *, verbose: bool = True):
+def _get_finite_difference(
+    input_array: np.array, order: int | None = None, *, verbose: bool = True
+):
     """Internal utility method for estimating rate of change.
 
     This function aims to approximate the rate of change for a loss function,
@@ -68,7 +70,7 @@ def _get_finite_difference(input_array: np.array, order: int | None = None, *, v
     if order is None:
         order = len(input_array) - 1
         if verbose:
-            log_msg = f"Interpreting finite difference order as {order} since" "no explicit order was specified."
+            log_msg = f"Interpreting finite difference order as {order} sinceno explicit order was specified."
             logging.info(msg=log_msg)
     elif order > len(input_array):
         error_msg = (
@@ -93,7 +95,7 @@ def _get_finite_difference(input_array: np.array, order: int | None = None, *, v
     order_is_even = order % 2 == 0
     # Next, we want to retrieve the correct coefficients based on the order
     if order > _FIFTH_ORDER and not order_is_even:
-        err_msg = "Accuracy orders larger than 5 must be even. Please " "check the arguments passed to the function."
+        err_msg = "Accuracy orders larger than 5 must be even. Please check the arguments passed to the function."
         logging.error(msg=err_msg)
         raise ValueError(err_msg)
 
@@ -107,5 +109,7 @@ def _get_finite_difference(input_array: np.array, order: int | None = None, *, v
     else:
         constants = _FIFTH_ORDER_COEFFICIENTS
 
-    pointwise_multiplication = [input_array[i] * constants[i] for i in range(len(constants))]
+    pointwise_multiplication = [
+        input_array[i] * constants[i] for i in range(len(constants))
+    ]
     return np.sum(pointwise_multiplication)

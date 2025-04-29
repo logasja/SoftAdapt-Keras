@@ -18,4 +18,4 @@ check = "mypy --install-types --non-interactive {args:tests}"
 packages = ["src/softadapt"]
 
 [envs.hatch-static-analysis]
-config-path = "ruff_defaults.toml"
+config-path = "ruff.toml"

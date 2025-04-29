@@ -73,7 +73,9 @@ class SoftAdaptBase:
 
         return exp_of_input / (ops.sum(exp_of_input) + self.epsilon)
 
-    def _compute_rates_of_change(self, input_tensor: KerasTensor, order: int = 5, *, verbose: bool = True):
+    def _compute_rates_of_change(
+        self, input_tensor: KerasTensor, order: int = 5, *, verbose: bool = True
+    ):
         """Base class method for computing loss functions rate of change.
 
         Args:
@@ -93,4 +95,6 @@ class SoftAdaptBase:
             None.
 
         """
-        return _get_finite_difference(input_array=ops.convert_to_numpy(input_tensor), order=order, verbose=verbose)
+        return _get_finite_difference(
+            input_array=ops.convert_to_numpy(input_tensor), order=order, verbose=verbose
+        )

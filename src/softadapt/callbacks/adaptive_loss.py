@@ -45,9 +45,13 @@ class AdaptiveLossCallback(callbacks.Callback):
         if algorithm == "base":
             self.algorithm = SoftAdapt(beta=beta, accuracy_order=accuracy_order)
         elif algorithm == "loss-weighted":
-            self.algorithm = LossWeightedSoftAdapt(beta=beta, accuracy_order=accuracy_order)
+            self.algorithm = LossWeightedSoftAdapt(
+                beta=beta, accuracy_order=accuracy_order
+            )
         else:
-            self.algorithm = NormalizedSoftAdapt(beta=beta, accuracy_order=accuracy_order)
+            self.algorithm = NormalizedSoftAdapt(
+                beta=beta, accuracy_order=accuracy_order
+            )
 
         self.frequency = frequency
         self.order = components
@@ -57,8 +61,12 @@ class AdaptiveLossCallback(callbacks.Callback):
         self.val = calculate_on_validation
         if backup_dir:
             self.backup_dir = backup_dir
-            self._component_history_path = file_utils.join(backup_dir, "adaptive_loss_metadata.npy")
-            self._adaptive_loss_weights_path = file_utils.join(backup_dir, "adaptive_loss_weights.npy")
+            self._component_history_path = file_utils.join(
+                backup_dir, "adaptive_loss_metadata.npy"
+            )
+            self._adaptive_loss_weights_path = file_utils.join(
+                backup_dir, "adaptive_loss_weights.npy"
+            )
         else:
             self.backup_dir = None
             self._component_history_path = None
@@ -76,7 +84,10 @@ class AdaptiveLossCallback(callbacks.Callback):
         if self.backup_dir is not None:
             if file_utils.exists(self._component_history_path):
                 saved_history = np.load(self._component_history_path)
-                self.components_history = [[ops.convert_to_tensor(i) for i in component] for component in saved_history]
+                self.components_history = [
+                    [ops.convert_to_tensor(i) for i in component]
+                    for component in saved_history
+                ]
             if file_utils.exists(self._adaptive_loss_weights_path):
                 saved_weights = np.load(self._adaptive_loss_weights_path)
                 self.weights = ops.convert_to_tensor(saved_weights)
@@ -86,7 +97,9 @@ class AdaptiveLossCallback(callbacks.Callback):
         # Update component history in order for weight computation
         if self.val:
             for k in self.order:
-                self.components_history[self.order.index(k)].append(ops.copy(logs["val_" + k]))
+                self.components_history[self.order.index(k)].append(
+                    ops.copy(logs["val_" + k])
+                )
         else:
             for k in self.order:
                 self.components_history[self.order.index(k)].append(ops.copy(logs[k]))
@@ -114,8 +127,15 @@ class AdaptiveLossCallback(callbacks.Callback):
         if self.backup_dir is not None:
             if not file_utils.exists(self.backup_dir):
                 file_utils.makedirs(self.backup_dir)
-            np.save(self._adaptive_loss_weights_path, ops.convert_to_numpy(self.weights))
+            np.save(
+                self._adaptive_loss_weights_path, ops.convert_to_numpy(self.weights)
+            )
             np.save(
                 self._component_history_path,
-                np.array([ops.convert_to_numpy(component) for component in self.components_history]),
+                np.array(
+                    [
+                        ops.convert_to_numpy(component)
+                        for component in self.components_history
+                    ]
+                ),
             )

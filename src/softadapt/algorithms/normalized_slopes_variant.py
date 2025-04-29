@@ -49,7 +49,9 @@ class NormalizedSoftAdapt(SoftAdaptBase):
         # accuracy in the finite difference approximation.
         self.accuracy_order = accuracy_order
 
-    def get_component_weights(self, *loss_component_values: tuple[KerasTensor], verbose: bool = True):
+    def get_component_weights(
+        self, *loss_component_values: tuple[KerasTensor], verbose: bool = True
+    ):
         """Class method for SoftAdapt weights.
 
         Args:
@@ -71,18 +73,20 @@ class NormalizedSoftAdapt(SoftAdaptBase):
         """
         if len(loss_component_values) == 1:
             warnings.warn(
-                "You have only passed on the values of one loss" " component, which will result in trivial weighting.",
+                "You have only passed on the values of one loss component, which will result in trivial weighting.",
                 stacklevel=2,
             )
 
         rates_of_change = [
-            self._compute_rates_of_change(loss_points, self.accuracy_order, verbose=verbose)
+            self._compute_rates_of_change(
+                loss_points, self.accuracy_order, verbose=verbose
+            )
             for loss_points in loss_component_values
         ]
 
-        rates_of_change = ops.convert_to_tensor(rates_of_change, dtype=backend.floatx()) / ops.sum(
-            ops.convert_to_tensor(rates_of_change, dtype=backend.floatx())
-        )
+        rates_of_change = ops.convert_to_tensor(
+            rates_of_change, dtype=backend.floatx()
+        ) / ops.sum(ops.convert_to_tensor(rates_of_change, dtype=backend.floatx()))
 
         # Calculate the weight and return the values.
         return self._softmax(input_tensor=rates_of_change, beta=self.beta)
