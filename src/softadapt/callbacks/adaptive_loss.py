@@ -1,4 +1,4 @@
-from typing import Literal
+from typing import Literal, Optional, List
 from keras import callbacks, ops, backend as K, KerasTensor
 from keras.src.utils import file_utils
 import numpy as np
@@ -13,16 +13,16 @@ from softadapt.algorithms import (
 class AdaptiveLossCallback(callbacks.Callback):
     def __init__(
         self,
-        components: list[str],
-        weights: list[float],
+        components: List[str],
+        weights: List[float],
         frequency: Literal["epoch"] | Literal["batch"] | int = "epoch",
         beta: float = 0.1,
-        accuracy_order: int = None,
+        accuracy_order: Optional[int] = None,
         algorithm: Literal["loss-weighted"]
         | Literal["normalized"]
         | Literal["base"] = "base",
         calculate_on_validation: bool = False,
-        backup_dir: str | None = None,
+        backup_dir: Optional[str] = None,
     ):
         if algorithm == "base":
             self.algorithm = SoftAdapt(beta=beta, accuracy_order=accuracy_order)
@@ -41,8 +41,6 @@ class AdaptiveLossCallback(callbacks.Callback):
         self.components_history: list[KerasTensor] = [[] for _ in components]
         self.debug = False
         self.val = calculate_on_validation
-        if not backup_dir:
-            raise ValueError("Empty `backup_dir` argument passed")
         if backup_dir:
             self.backup_dir = backup_dir
             self._component_history_path = file_utils.join(
@@ -94,7 +92,7 @@ class AdaptiveLossCallback(callbacks.Callback):
             and len(self.components_history[0]) > 1
         ):
             adapt_weights = self.algorithm.get_component_weights(
-                *ops.convert_to_tensor(self.components_history), verbose=self.debug
+                *ops.convert_to_tensor(self.components_history, dtype=K.floatx()), verbose=self.debug
             )
 
             self.weights = ops.cast(adapt_weights, K.floatx())

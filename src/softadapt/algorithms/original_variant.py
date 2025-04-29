@@ -1,14 +1,14 @@
-"""Implementaion of the loss-weighted variant of SoftAdapt."""
+"""Implementaion of the original variant of SoftAdapt."""
 
-from keras import ops, backend as K, KerasTensor
+from typing import Tuple, Optional
+from keras import ops, KerasTensor, backend as K
 from softadapt.base._softadapt_base_class import SoftAdaptBase
-from typing import Tuple
 
 
-class LossWeightedSoftAdapt(SoftAdaptBase):
-    """Class implementation of the loss-weighted SoftAdapt variant.
+class SoftAdapt(SoftAdaptBase):
+    """The original variant class.
 
-    The loss-weighted variant of SoftAdapt is described in section 3.1.1 of our
+    The original variant of SoftAdapt is described in section 3.1.1 of our
     manuscript (located at: https://arxiv.org/pdf/1912.12355.pdf).
 
     Attributes:
@@ -20,9 +20,10 @@ class LossWeightedSoftAdapt(SoftAdaptBase):
 
         accuracy_order: An integer indicating the accuracy order of the finite
           volume approximation of each loss component's slope.
+
     """
 
-    def __init__(self, beta: float = 0.1, accuracy_order: int = None):
+    def __init__(self, beta: float = 0.1, accuracy_order: Optional[int] = None):
         """SoftAdapt class initializer."""
         super().__init__()
         self.beta = beta
@@ -59,7 +60,6 @@ class LossWeightedSoftAdapt(SoftAdaptBase):
             )
 
         rates_of_change = []
-        average_loss_values = []
 
         for loss_points in loss_component_values:
             # Compute the rates of change for each one of the loss components.
@@ -68,13 +68,7 @@ class LossWeightedSoftAdapt(SoftAdaptBase):
                     loss_points, self.accuracy_order, verbose=verbose
                 )
             )
-            average_loss_values.append(ops.mean(ops.cast(loss_points, K.floatx())))
 
-        rates_of_change = ops.convert_to_tensor(rates_of_change)
-        average_loss_values = ops.convert_to_tensor(average_loss_values)
+        rates_of_change = ops.convert_to_tensor(rates_of_change, dtype=K.floatx())
         # Calculate the weight and return the values.
-        return self._softmax(
-            input_tensor=rates_of_change,
-            beta=self.beta,
-            numerator_weights=average_loss_values,
-        )
+        return self._softmax(input_tensor=rates_of_change, beta=self.beta)

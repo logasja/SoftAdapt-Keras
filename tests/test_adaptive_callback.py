@@ -25,8 +25,8 @@ class TestAdaptiveLossCallback(unittest.TestCase):
         # Test if the callback initializes correctly
         self.assertEqual(self.callback.order, self.components)
         self.assertTrue(isinstance(self.callback.algorithm, SoftAdapt))
-        self.assertTrue(np.array_equal(ops.convert_to_numpy(self.callback.variable_weights[0]), self.weights[0]))
-        self.assertTrue(np.array_equal(ops.convert_to_numpy(self.callback.variable_weights[1]), self.weights[1]))
+        self.assertTrue(np.array_equal(ops.convert_to_numpy(self.callback._weights[0]), self.weights[0]))
+        self.assertTrue(np.array_equal(ops.convert_to_numpy(self.callback._weights[1]), self.weights[1]))
         self.assertEqual(self.callback.frequency, 'epoch')
         self.assertEqual(len(self.callback.components_history), len(self.components))
 
@@ -45,10 +45,8 @@ class TestAdaptiveLossCallback(unittest.TestCase):
         self.callback.algorithm.get_component_weights = lambda *x, verbose: np.array([0.6, 0.4])
         self.callback.on_epoch_end(epoch=1, logs=logs)
 
-        print(ops.convert_to_numpy(self.callback.variable_weights))
-
         # Check if the weights have been updated
-        self.assertTrue(np.allclose(ops.convert_to_numpy(self.callback.variable_weights), [0.6, 0.4]))
+        self.assertTrue(np.allclose(ops.convert_to_numpy(self.callback._weights), [0.6, 0.4]))
 
     def test_true_epoch_end_updates_weights(self):
         # Simulate logs for the end of an epoch
@@ -63,7 +61,7 @@ class TestAdaptiveLossCallback(unittest.TestCase):
         self.callback.on_epoch_end(epoch=1, logs=logs)
 
         # Check if the weights have been updated
-        self.assertTrue(np.allclose(ops.convert_to_numpy(self.callback.variable_weights), [0.5, 0.5]))
+        self.assertTrue(np.allclose(ops.convert_to_numpy(self.callback._weights), [0.5, 0.5]))
 
     def test_on_epoch_end_clears_history(self):
         # Simulate logs for the end of an epoch

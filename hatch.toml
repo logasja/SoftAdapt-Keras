@@ -1,0 +1,23 @@
+[envs.hatch-test]
+# skip-install = true
+dependencies = [
+  "ipykernel",
+  "torch"
+]
+
+[envs.dev]
+extra-dependencies = [
+  "torch",
+  "ruff",
+  "pre-commit",
+]
+
+[envs.types]
+extra-dependencies = [
+  "mypy>=1.0.0",
+]
+[envs.types.scripts]
+check = "mypy --install-types --non-interactive {args:src/softadapt/tests}"
+
+[build.targets.wheel]
+packages = ["src/softadapt"]

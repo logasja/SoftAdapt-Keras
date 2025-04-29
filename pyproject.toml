@@ -1,25 +1,56 @@
+[build-system]
+requires = ["hatchling","versioningit"]
+build-backend = "hatchling.build"
+
 [project]
-name = "softadapt_keras"
-version = "0.1.1"
+name = "softadapt"
 authors = [
   { name="A. Ali Heydari", email="aliheydari@ucdavis.edu"},
   { name="Jacob Logas", email="logasja@gatech.edu" },
 ]
 description = "SoftAdapt: Techniques for Adaptive Loss Weighting of Neural Networks with Multi-Part Loss Functions implemented in Keras"
 readme = "README.md"
-requires-python = ">=3.8"
+license="MIT"
+requires-python = ">=3.11"
 classifiers = [
     "Development Status :: 4 - Beta",
     "Intended Audience :: Science/Research",
-    "License :: OSI Approved :: MIT Software License",
-    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
     "Topic :: Scientific/Engineering :: Artificial Intelligence"
 ]
 keywords=["Physics-Informed Neural Networks", "Balancing PINNs Loss",
                 "Adaptive-Weighting, Multi-Task-Nerual-Networks Optimization",
                 "Gradient-Descent-Weighting, Machine Learning"]
 dependencies = ["findiff", "keras>=3.0.0", "numpy"]
+dynamic = ["version"]
 
 [project.urls]
-Homepage = "https://github.com/dr-aheydari/SoftAdapt-Keras"
-Issues = "https://github.com/dr-aheydari/SoftAdapt-Keras/issues"
+Homepage = "https://github.com/logasja/SoftAdapt-Keras"
+Issues = "https://github.com/logasja/SoftAdapt-Keras/issues"
+
+[tool.hatch.version]
+source = "versioningit"
+default-version = "0.0.0+unknown"
+
+[tool.hatch.version.format]
+distance = "{next_version}.dev{distance}+{vcs}{rev}"
+dirty = "{version}+dirty"
+distance-dirty = "{next_version}.dev{distance}+{vcs}{rev}.dirty"
+
+[tool.coverage.run]
+source_pkgs = ["src/softadapt", "tests"]
+branch = true
+parallel = true
+
+[tool.coverage.paths]
+softadapt = ["src/softadapt"]
+tests = ["tests/"]
+
+[tool.coverage.report]
+exclude_lines = [
+  "no cov",
+  "if __name__ == .__main__.:",
+  "if TYPE_CHECKING:",
+]

@@ -1,7 +1,6 @@
 """Implementaion of the base class for SoftAdapt."""
-
-from keras import ops, KerasTensor
-from softadapt.constants._stability_constants import _EPSILON
+from typing import Optional
+from keras import ops, KerasTensor, backend as K
 from softadapt.utilities._finite_difference import _get_finite_difference
 
 
@@ -16,13 +15,13 @@ class SoftAdaptBase:
 
     def __init__(self):
         """Initializer of the base method."""
-        self.epsilon = _EPSILON
+        self.epsilon = K.epsilon()
 
     def _softmax(
         self,
         input_tensor: KerasTensor,
         beta: float = 1,
-        numerator_weights: KerasTensor = None,
+        numerator_weights: Optional[KerasTensor] = None,
         shift_by_max_value: bool = True,
     ):
         """Implementation of SoftAdapt's modified softmax function.

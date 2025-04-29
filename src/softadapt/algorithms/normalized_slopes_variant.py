@@ -1,8 +1,8 @@
 """Implementaion of the slope-normalized variant of SoftAdapt."""
 
-from keras import ops, KerasTensor
+from typing import Tuple, Optional
+from keras import ops, KerasTensor, backend as K
 from softadapt.base._softadapt_base_class import SoftAdaptBase
-from typing import Tuple
 
 
 class NormalizedSoftAdapt(SoftAdaptBase):
@@ -23,7 +23,7 @@ class NormalizedSoftAdapt(SoftAdaptBase):
 
     """
 
-    def __init__(self, beta: float = 0.1, accuracy_order: int = None):
+    def __init__(self, beta: float = 0.1, accuracy_order: Optional[int] = None):
         """SoftAdapt class initializer."""
         super().__init__()
         self.beta = beta
@@ -69,8 +69,8 @@ class NormalizedSoftAdapt(SoftAdaptBase):
                 )
             )
 
-        rates_of_change = ops.convert_to_tensor(rates_of_change) / ops.sum(
-            ops.convert_to_tensor(rates_of_change)
+        rates_of_change = ops.convert_to_tensor(rates_of_change, dtype=K.floatx()) / ops.sum(
+            ops.convert_to_tensor(rates_of_change, dtype=K.floatx())
         )
 
         # Calculate the weight and return the values.
