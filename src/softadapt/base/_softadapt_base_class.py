@@ -1,6 +1,8 @@
 """Implementaion of the base class for SoftAdapt."""
-from typing import Optional
-from keras import ops, KerasTensor, backend as K
+
+
+from keras import KerasTensor, backend, ops
+
 from softadapt.utilities._finite_difference import _get_finite_difference
 
 
@@ -15,13 +17,14 @@ class SoftAdaptBase:
 
     def __init__(self):
         """Initializer of the base method."""
-        self.epsilon = K.epsilon()
+        self.epsilon = backend.epsilon()
 
     def _softmax(
         self,
         input_tensor: KerasTensor,
         beta: float = 1,
-        numerator_weights: Optional[KerasTensor] = None,
+        numerator_weights: KerasTensor | None = None,
+        *,
         shift_by_max_value: bool = True,
     ):
         """Implementation of SoftAdapt's modified softmax function.
@@ -56,7 +59,7 @@ class SoftAdaptBase:
         return exp_of_input / (ops.sum(exp_of_input) + self.epsilon)
 
     def _compute_rates_of_change(
-        self, input_tensor: KerasTensor, order: int = 5, verbose: bool = True
+        self, input_tensor: KerasTensor, order: int = 5, *, verbose: bool = True
     ):
         """Base class method for computing loss functions rate of change.
 

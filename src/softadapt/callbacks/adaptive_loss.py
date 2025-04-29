@@ -1,7 +1,8 @@
-from typing import Literal, Optional, List
-from keras import callbacks, ops, backend as K, KerasTensor
-from keras.src.utils import file_utils
+from typing import Literal
+
 import numpy as np
+from keras import KerasTensor, backend, callbacks, ops
+from keras.src.utils import file_utils
 
 from softadapt.algorithms import (
     LossWeightedSoftAdapt,
@@ -13,16 +14,15 @@ from softadapt.algorithms import (
 class AdaptiveLossCallback(callbacks.Callback):
     def __init__(
         self,
-        components: List[str],
-        weights: List[float],
-        frequency: Literal["epoch"] | Literal["batch"] | int = "epoch",
+        components: list[str],
+        weights: list[float],
+        frequency: Literal["epoch", "batch"] | int = "epoch",
         beta: float = 0.1,
-        accuracy_order: Optional[int] = None,
-        algorithm: Literal["loss-weighted"]
-        | Literal["normalized"]
-        | Literal["base"] = "base",
+        accuracy_order: int | None = None,
+        algorithm: Literal["loss-weighted", "normalized", "base"] = "base",
+        backup_dir: str | None = None,
+        *,
         calculate_on_validation: bool = False,
-        backup_dir: Optional[str] = None,
     ):
         if algorithm == "base":
             self.algorithm = SoftAdapt(beta=beta, accuracy_order=accuracy_order)
@@ -61,7 +61,7 @@ class AdaptiveLossCallback(callbacks.Callback):
     def weights(self, value):
         self._weights = value
 
-    def on_train_begin(self, logs=None):
+    def on_train_begin(self, logs: dict | None = None):
         """Get adaptive loss state from temporary file and restore it."""
         if self.backup_dir is not None:
             if file_utils.exists(self._component_history_path):
@@ -73,8 +73,9 @@ class AdaptiveLossCallback(callbacks.Callback):
             if file_utils.exists(self._adaptive_loss_weights_path):
                 saved_weights = np.load(self._adaptive_loss_weights_path)
                 self.weights = ops.convert_to_tensor(saved_weights)
+        return super().on_train_begin(logs)
 
-    def on_epoch_end(self, epoch, logs=None):
+    def on_epoch_end(self, epoch: int, logs: dict | None =None):
         # Update component history in order for weight computation
         if self.val:
             for k in self.order:
@@ -92,10 +93,10 @@ class AdaptiveLossCallback(callbacks.Callback):
             and len(self.components_history[0]) > 1
         ):
             adapt_weights = self.algorithm.get_component_weights(
-                *ops.convert_to_tensor(self.components_history, dtype=K.floatx()), verbose=self.debug
+                *ops.convert_to_tensor(self.components_history, dtype=backend.floatx()), verbose=self.debug
             )
 
-            self.weights = ops.cast(adapt_weights, K.floatx())
+            self.weights = ops.cast(adapt_weights, backend.floatx())
 
             for h in self.components_history:
                 if (

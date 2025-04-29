@@ -1,7 +1,9 @@
 """Implementaion of the slope-normalized variant of SoftAdapt."""
 
-from typing import Tuple, Optional
-from keras import ops, KerasTensor, backend as K
+import warnings
+
+from keras import KerasTensor, backend, ops
+
 from softadapt.base._softadapt_base_class import SoftAdaptBase
 
 
@@ -23,7 +25,7 @@ class NormalizedSoftAdapt(SoftAdaptBase):
 
     """
 
-    def __init__(self, beta: float = 0.1, accuracy_order: Optional[int] = None):
+    def __init__(self, beta: float = 0.1, accuracy_order: int | None = None):
         """SoftAdapt class initializer."""
         super().__init__()
         self.beta = beta
@@ -32,7 +34,7 @@ class NormalizedSoftAdapt(SoftAdaptBase):
         self.accuracy_order = accuracy_order
 
     def get_component_weights(
-        self, *loss_component_values: Tuple[KerasTensor], verbose: bool = True
+        self, *loss_component_values: tuple[KerasTensor], verbose: bool = True
     ):
         """Class method for SoftAdapt weights.
 
@@ -54,23 +56,16 @@ class NormalizedSoftAdapt(SoftAdaptBase):
 
         """
         if len(loss_component_values) == 1:
-            print(
-                "==> Warning: You have only passed on the values of one loss"
-                " component, which will result in trivial weighting."
+            warnings.warn(
+                "You have only passed on the values of one loss"
+                " component, which will result in trivial weighting.",
+                stacklevel=2
             )
 
-        rates_of_change = []
+        rates_of_change = [self._compute_rates_of_change(loss_points, self.accuracy_order, verbose=verbose) for loss_points in loss_component_values]
 
-        for loss_points in loss_component_values:
-            # Compute the rates of change for each one of the loss components.
-            rates_of_change.append(
-                self._compute_rates_of_change(
-                    loss_points, self.accuracy_order, verbose=verbose
-                )
-            )
-
-        rates_of_change = ops.convert_to_tensor(rates_of_change, dtype=K.floatx()) / ops.sum(
-            ops.convert_to_tensor(rates_of_change, dtype=K.floatx())
+        rates_of_change = ops.convert_to_tensor(rates_of_change, dtype=backend.floatx()) / ops.sum(
+            ops.convert_to_tensor(rates_of_change, dtype=backend.floatx())
         )
 
         # Calculate the weight and return the values.

@@ -5,6 +5,9 @@ dependencies = [
   "torch"
 ]
 
+[envs.hatch-test.env-vars]
+KERAS_BACKEND = "torch"
+
 [envs.dev]
 extra-dependencies = [
   "torch",

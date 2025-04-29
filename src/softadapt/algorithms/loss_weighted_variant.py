@@ -1,7 +1,9 @@
 """Implementaion of the loss-weighted variant of SoftAdapt."""
 
-from typing import Tuple, Optional
-from keras import ops, backend as K, KerasTensor
+import warnings
+
+from keras import KerasTensor, backend, ops
+
 from softadapt.base._softadapt_base_class import SoftAdaptBase
 
 
@@ -22,7 +24,7 @@ class LossWeightedSoftAdapt(SoftAdaptBase):
           volume approximation of each loss component's slope.
     """
 
-    def __init__(self, beta: float = 0.1, accuracy_order: Optional[int] = None):
+    def __init__(self, beta: float = 0.1, accuracy_order: int | None = None):
         """SoftAdapt class initializer."""
         super().__init__()
         self.beta = beta
@@ -31,7 +33,7 @@ class LossWeightedSoftAdapt(SoftAdaptBase):
         self.accuracy_order = accuracy_order
 
     def get_component_weights(
-        self, *loss_component_values: Tuple[KerasTensor], verbose: bool = True
+        self, *loss_component_values: tuple[KerasTensor], verbose: bool = True
     ):
         """Class method for SoftAdapt weights.
 
@@ -53,9 +55,10 @@ class LossWeightedSoftAdapt(SoftAdaptBase):
 
         """
         if len(loss_component_values) == 1:
-            print(
-                "==> Warning: You have only passed on the values of one loss"
-                " component, which will result in trivial weighting."
+            warnings.warn(
+                "You have only passed on the values of one loss"
+                " component, which will result in trivial weighting.",
+                stacklevel=2
             )
 
         rates_of_change = []
@@ -68,10 +71,10 @@ class LossWeightedSoftAdapt(SoftAdaptBase):
                     loss_points, self.accuracy_order, verbose=verbose
                 )
             )
-            average_loss_values.append(ops.mean(ops.cast(loss_points, dtype=K.floatx())))
+            average_loss_values.append(ops.mean(ops.cast(loss_points, dtype=backend.floatx())))
 
-        rates_of_change = ops.convert_to_tensor(rates_of_change, dtype=K.floatx())
-        average_loss_values = ops.convert_to_tensor(average_loss_values, dtype=K.floatx())
+        rates_of_change = ops.convert_to_tensor(rates_of_change, dtype=backend.floatx())
+        average_loss_values = ops.convert_to_tensor(average_loss_values, dtype=backend.floatx())
         # Calculate the weight and return the values.
         return self._softmax(
             input_tensor=rates_of_change,

@@ -1,6 +1,7 @@
-# ruff: noqa: F401
 """Second level module import for SoftAdapt."""
+# ruff: noqa: F401
 
+import softadapt.callbacks
 from softadapt.algorithms import (
     LossWeightedSoftAdapt,
     NormalizedSoftAdapt,
@@ -8,7 +9,6 @@ from softadapt.algorithms import (
 )
 from softadapt.constants import _finite_difference_constants, _stability_constants
 from softadapt.utilities import _finite_difference
-import softadapt.callbacks
 
 # # adding package information and version
 # try:

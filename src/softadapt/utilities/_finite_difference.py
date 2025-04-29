@@ -1,16 +1,22 @@
 """Internal implementation of"""
 
-import numpy
+import logging
+
+import numpy as np
 from findiff import coefficients
+
 from softadapt.constants._finite_difference_constants import (
-    _FIRST_ORDER_COEFFICIENTS,
-    _THIRD_ORDER_COEFFICIENTS,
+    _FIFTH_ORDER,
     _FIFTH_ORDER_COEFFICIENTS,
+    _FIRST_ORDER,
+    _FIRST_ORDER_COEFFICIENTS,
+    _THIRD_ORDER,
+    _THIRD_ORDER_COEFFICIENTS,
 )
 
 
 def _get_finite_difference(
-    input_array: numpy.array, order: int = None, verbose: bool = True
+    input_array: np.array, order: int | None = None, *, verbose: bool = True
 ):
     """Internal utility method for estimating rate of change.
 
@@ -48,48 +54,46 @@ def _get_finite_difference(
     if order is None:
         order = len(input_array) - 1
         if verbose:
-            print(
-                f"==> Interpreting finite difference order as {order} since"
-                "no explicit order was specified."
-            )
-    else:
-        if order > len(input_array):
-            raise ValueError(
-                "The order of finite difference computations can"
-                "not be larger than the number of loss points. "
-                "Please check the order argument or wait until "
-                "enough points have been stored before calling the"
-                " method."
-            )
-        elif order + 1 < len(input_array):
-            print(
-                f"==> There are more points than 'order' + 1 ({order + 1}) "
-                f"points (array contains {len(input_array)} values). Function"
-                f"will use the last {order} elements of loss points for "
-                "computations."
-            )
-            input_array = input_array[(-1 * order - 1) :]
+            log_msg = f"Interpreting finite difference order as {order} since"\
+                        "no explicit order was specified."
+            logging.info(msg=log_msg)
+    elif order > len(input_array):
+        error_msg = "The order of finite difference computations can"\
+            "not be larger than the number of loss points. "\
+            "Please check the order argument or wait until "\
+            "enough points have been stored before calling the"\
+            " method."
+        logging.error(msg=error_msg)
+        raise ValueError(
+            error_msg
+        )
+    elif order + 1 < len(input_array):
+        log_msg = f"There are more points than 'order' + 1 ({order + 1}) "\
+            f"points (array contains {len(input_array)} values). Function"\
+            f"will use the last {order} elements of loss points for "\
+            "computations."
+        logging.info(msg=log_msg)
+        input_array = input_array[(-1 * order - 1) :]
 
     order_is_even = order % 2 == 0
     # Next, we want to retrieve the correct coefficients based on the order
-    if order > 5 and not order_is_even:
-        raise ValueError(
-            "Accuracy orders larger than 5 must be even. Please "
-            "check the arguments passed to the function."
-        )
+    if order > _FIFTH_ORDER and not order_is_even:
+        err_msg = "Accuracy orders larger than 5 must be even. Please "\
+                  "check the arguments passed to the function."
+        logging.error(msg=err_msg)
+        raise ValueError(err_msg)
 
     if order_is_even:
         constants = coefficients(deriv=1, acc=order)["forward"]["coefficients"]
 
+    elif order == _FIRST_ORDER:
+        constants = _FIRST_ORDER_COEFFICIENTS
+    elif order == _THIRD_ORDER:
+        constants = _THIRD_ORDER_COEFFICIENTS
     else:
-        if order == 1:
-            constants = _FIRST_ORDER_COEFFICIENTS
-        elif order == 3:
-            constants = _THIRD_ORDER_COEFFICIENTS
-        else:
-            constants = _FIFTH_ORDER_COEFFICIENTS
+        constants = _FIFTH_ORDER_COEFFICIENTS
 
     pointwise_multiplication = [
         input_array[i] * constants[i] for i in range(len(constants))
     ]
-    return numpy.sum(pointwise_multiplication)
+    return np.sum(pointwise_multiplication)
