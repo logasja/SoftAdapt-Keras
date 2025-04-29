@@ -1,5 +1,20 @@
-"""Implementaion of the base class for SoftAdapt."""
+"""
+Implementation of the base class for SoftAdapt.
+Copyright (C) 2025 Jacob Logas
 
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <https://www.gnu.org/licenses/>.
+"""
 
 from keras import KerasTensor, backend, ops
 
@@ -58,9 +73,7 @@ class SoftAdaptBase:
 
         return exp_of_input / (ops.sum(exp_of_input) + self.epsilon)
 
-    def _compute_rates_of_change(
-        self, input_tensor: KerasTensor, order: int = 5, *, verbose: bool = True
-    ):
+    def _compute_rates_of_change(self, input_tensor: KerasTensor, order: int = 5, *, verbose: bool = True):
         """Base class method for computing loss functions rate of change.
 
         Args:
@@ -80,6 +93,4 @@ class SoftAdaptBase:
             None.
 
         """
-        return _get_finite_difference(
-            input_array=ops.convert_to_numpy(input_tensor), order=order, verbose=verbose
-        )
+        return _get_finite_difference(input_array=ops.convert_to_numpy(input_tensor), order=order, verbose=verbose)

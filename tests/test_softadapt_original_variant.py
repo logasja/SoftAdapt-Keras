@@ -1,4 +1,5 @@
 """Unit testing for the original SoftAdapt variant."""
+
 import unittest
 
 import numpy as np
@@ -29,23 +30,20 @@ class TestSoftAdapt(unittest.TestCase):
         assert np.isclose(
             ops.convert_to_numpy(alpha_0),
             ops.convert_to_numpy(solutions[0]),
-            rtol=self.rtol),\
-            "Incorrect SoftAdapt calculation for simple 'dominant loss' case."\
-            "The first loss component failed."
+            rtol=self.rtol,
+        ), "Incorrect SoftAdapt calculation for simple 'dominant loss' case." "The first loss component failed."
 
         assert np.isclose(
             ops.convert_to_numpy(alpha_1),
             ops.convert_to_numpy(solutions[1]),
-            rtol=self.rtol),\
-            "Incorrect SoftAdapt calculation for simple 'dominant loss' case."\
-            "The second loss component failed."
+            rtol=self.rtol,
+        ), "Incorrect SoftAdapt calculation for simple 'dominant loss' case." "The second loss component failed."
 
         assert np.isclose(
             ops.convert_to_numpy(alpha_2),
             ops.convert_to_numpy(solutions[2]),
-            rtol=self.rtol),\
-            "Incorrect SoftAdapt calculation for simple 'dominant loss' case."\
-            "The second loss component failed."
+            rtol=self.rtol,
+        ), "Incorrect SoftAdapt calculation for simple 'dominant loss' case." "The second loss component failed."
 
     # TODO: Add more sophisticated unit tests
 

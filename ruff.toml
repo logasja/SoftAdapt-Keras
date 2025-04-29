@@ -1,2 +1,4 @@
-# Assume Python 3.12
-target-version = "py312"
+extend = "ruff_defaults.toml"
+
+# Assume Python 3.10
+target-version = "py310"

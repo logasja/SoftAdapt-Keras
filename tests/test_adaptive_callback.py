@@ -12,12 +12,17 @@ from softadapt.callbacks import AdaptiveLossCallback
 
 
 class TestAdaptiveLossCallback(unittest.TestCase):
-
     def setUp(self):
         # Set up the initial parameters for the callback
-        self.components = ['loss1', 'loss2']
+        self.components = ["loss1", "loss2"]
         self.weights = [0.5, 0.5]
-        self.callback = AdaptiveLossCallback(components=self.components, weights=self.weights, frequency='epoch', beta=0.1, algorithm='base')
+        self.callback = AdaptiveLossCallback(
+            components=self.components,
+            weights=self.weights,
+            frequency="epoch",
+            beta=0.1,
+            algorithm="base",
+        )
 
     def test_initialization(self):
         # Test if the callback initializes correctly
@@ -25,12 +30,12 @@ class TestAdaptiveLossCallback(unittest.TestCase):
         assert isinstance(self.callback.algorithm, SoftAdapt)
         assert np.array_equal(ops.convert_to_numpy(self.callback.weights[0]), self.weights[0])
         assert np.array_equal(ops.convert_to_numpy(self.callback.weights[1]), self.weights[1])
-        assert self.callback.frequency == 'epoch'
+        assert self.callback.frequency == "epoch"
         assert len(self.callback.components_history) == len(self.components)
 
     def test_on_epoch_end_updates_weights(self):
         # Simulate logs for the end of an epoch
-        logs = {'loss1': 0.2, 'loss2': 0.3}
+        logs = {"loss1": 0.2, "loss2": 0.3}
         self.callback.on_epoch_end(epoch=0, logs=logs)
 
         # Check if the component history is updated
@@ -48,7 +53,7 @@ class TestAdaptiveLossCallback(unittest.TestCase):
 
     def test_true_epoch_end_updates_weights(self):
         # Simulate logs for the end of an epoch
-        logs = {'loss1': 0.2, 'loss2': 0.3}
+        logs = {"loss1": 0.2, "loss2": 0.3}
         self.callback.on_epoch_end(epoch=0, logs=logs)
 
         # Check if the component history is updated
@@ -63,7 +68,7 @@ class TestAdaptiveLossCallback(unittest.TestCase):
 
     def test_on_epoch_end_clears_history(self):
         # Simulate logs for the end of an epoch
-        logs = {'loss1': 0.2, 'loss2': 0.3}
+        logs = {"loss1": 0.2, "loss2": 0.3}
         self.callback.on_epoch_end(epoch=0, logs=logs)
 
         # Check if the component history is updated
@@ -72,7 +77,7 @@ class TestAdaptiveLossCallback(unittest.TestCase):
 
         # Call on_epoch_end again to trigger clearing of history
         self.callback.algorithm.get_component_weights = unittest.mock.MagicMock(return_value=np.array([0.6, 0.4]))
-        logs = {'loss1': 0.5, 'loss2': 0.2}
+        logs = {"loss1": 0.5, "loss2": 0.2}
         self.callback.on_epoch_end(epoch=1, logs=logs)
 
         # Check if the history has been cleared except for one
@@ -83,5 +88,6 @@ class TestAdaptiveLossCallback(unittest.TestCase):
         # Clean up any resources if needed
         backend.clear_session()
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     unittest.main()

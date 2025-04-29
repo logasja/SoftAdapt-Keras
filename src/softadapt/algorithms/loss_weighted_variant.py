@@ -1,4 +1,20 @@
-"""Implementaion of the loss-weighted variant of SoftAdapt."""
+"""
+Implementation of the loss-weighted variant of SoftAdapt.
+Copyright (C) 2025 Jacob Logas
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <https://www.gnu.org/licenses/>.
+"""
 
 import warnings
 
@@ -32,9 +48,7 @@ class LossWeightedSoftAdapt(SoftAdaptBase):
         # accuracy in the finite difference approximation.
         self.accuracy_order = accuracy_order
 
-    def get_component_weights(
-        self, *loss_component_values: tuple[KerasTensor], verbose: bool = True
-    ):
+    def get_component_weights(self, *loss_component_values: tuple[KerasTensor], verbose: bool = True):
         """Class method for SoftAdapt weights.
 
         Args:
@@ -56,9 +70,8 @@ class LossWeightedSoftAdapt(SoftAdaptBase):
         """
         if len(loss_component_values) == 1:
             warnings.warn(
-                "You have only passed on the values of one loss"
-                " component, which will result in trivial weighting.",
-                stacklevel=2
+                "You have only passed on the values of one loss" " component, which will result in trivial weighting.",
+                stacklevel=2,
             )
 
         rates_of_change = []
@@ -66,11 +79,7 @@ class LossWeightedSoftAdapt(SoftAdaptBase):
 
         for loss_points in loss_component_values:
             # Compute the rates of change for each one of the loss components.
-            rates_of_change.append(
-                self._compute_rates_of_change(
-                    loss_points, self.accuracy_order, verbose=verbose
-                )
-            )
+            rates_of_change.append(self._compute_rates_of_change(loss_points, self.accuracy_order, verbose=verbose))
             average_loss_values.append(ops.mean(ops.cast(loss_points, dtype=backend.floatx())))
 
         rates_of_change = ops.convert_to_tensor(rates_of_change, dtype=backend.floatx())
