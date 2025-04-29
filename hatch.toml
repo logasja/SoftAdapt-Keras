@@ -1,0 +1,22 @@
+[envs.hatch-test]
+# skip-install = true
+extra-dependencies = ["ipykernel", "torch"]
+[[envs.hatch-test.matrix]]
+python = ["3.13", "3.12", "3.11", "3.10"]
+[envs.hatch-test.env-vars]
+KERAS_BACKEND = "torch"
+
+[envs.dev]
+extra-dependencies = ["torch", "ruff", "pre-commit"]
+
+[envs.types]
+extra-dependencies = ["mypy>=1.0.0"]
+[envs.types.scripts]
+check = "mypy --install-types --non-interactive {args:tests}"
+
+[build.targets.wheel]
+packages = ["src/softadapt"]
+
+[envs.hatch-static-analysis]
+config-path = "ruff.toml"
+dependencies = ["ruff==0.11.7"]
