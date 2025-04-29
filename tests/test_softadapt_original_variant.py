@@ -5,15 +5,15 @@ import unittest
 import numpy as np
 from keras import backend, ops
 
-from softadapt import SoftAdapt
+from softadapt.algorithms import SoftAdapt
 
 
 class TestSoftAdapt(unittest.TestCase):
     """Class for testing our finite difference implementation."""
 
     @classmethod
-    def setUpClass(class_):
-        class_.rtol = 1e-5
+    def setUpClass(cls):
+        cls.rtol = 1e-5
 
     # First starting with positive slope test cases.
     def test_beta_positive_three_components(self):

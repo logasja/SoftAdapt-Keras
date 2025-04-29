@@ -1,5 +1,9 @@
+[envs.default]
+installer = "uv"
+
 [envs.hatch-test]
 # skip-install = true
+installer = "uv"
 extra-dependencies = ["ipykernel", "torch"]
 [[envs.hatch-test.matrix]]
 python = ["3.13", "3.12", "3.11", "3.10"]
@@ -7,9 +11,11 @@ python = ["3.13", "3.12", "3.11", "3.10"]
 KERAS_BACKEND = "torch"
 
 [envs.dev]
+installer = "uv"
 extra-dependencies = ["torch", "ruff", "pre-commit"]
 
 [envs.types]
+installer = "uv"
 extra-dependencies = ["mypy>=1.0.0"]
 [envs.types.scripts]
 check = "mypy --install-types --non-interactive {args:tests}"

@@ -21,7 +21,7 @@ import logging
 import numpy as np
 from findiff import coefficients
 
-from softadapt.constants._finite_difference_constants import (
+from softadapt.constants import (
     _FIFTH_ORDER,
     _FIFTH_ORDER_COEFFICIENTS,
     _FIRST_ORDER,
