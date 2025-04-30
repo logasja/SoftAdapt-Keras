@@ -1,5 +1,5 @@
 [build.targets.sdist]
-exclude = ["/.github", "/docs", "/tests"]
+exclude = ["/.github", "/docs", "/tests", "/scripts"]
 
 [envs.default]
 installer = "uv"
