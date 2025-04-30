@@ -3,12 +3,7 @@ import unittest
 import numpy as np
 from keras import backend, ops
 
-from softadapt.algorithms import (
-    SoftAdapt,
-)
-
-# Assuming AdaptiveLossCallback is defined in a module named adaptive_loss_callback
-from softadapt.callbacks import AdaptiveLossCallback
+import softadapt
 
 
 class TestAdaptiveLossCallback(unittest.TestCase):
@@ -16,7 +11,7 @@ class TestAdaptiveLossCallback(unittest.TestCase):
         # Set up the initial parameters for the callback
         self.components = ["loss1", "loss2"]
         self.weights = [0.5, 0.5]
-        self.callback = AdaptiveLossCallback(
+        self.callback = softadapt.callbacks.AdaptiveLossCallback(
             components=self.components,
             weights=self.weights,
             frequency="epoch",
@@ -27,7 +22,7 @@ class TestAdaptiveLossCallback(unittest.TestCase):
     def test_initialization(self):
         # Test if the callback initializes correctly
         assert self.callback.order == self.components
-        assert isinstance(self.callback.algorithm, SoftAdapt)
+        assert isinstance(self.callback.algorithm, softadapt.algorithms.SoftAdapt)
         assert np.array_equal(
             ops.convert_to_numpy(self.callback.weights[0]), self.weights[0]
         )
