@@ -30,6 +30,19 @@ from softadapt.algorithms import (
 
 
 class AdaptiveLossCallback(callbacks.Callback):
+    """Keras callback for use of SoftAdapt within the Keras machine learning framework.
+
+    Attributes:
+        components (list[str]): _description_
+        weights (list[float]): _description_
+        frequency (Literal["epoch", "batch"] | int, optional): _description_. Defaults to "epoch".
+        beta (float, optional): _description_. Defaults to 0.1.
+        accuracy_order (int | None, optional): _description_. Defaults to None.
+        algorithm (Literal["loss-weighted", "normalized", "base"], optional): _description_. Defaults to "base".
+        backup_dir (str | None, optional): _description_. Defaults to None.
+        calculate_on_validation (bool, optional): _description_. Defaults to False.
+    """
+
     def __init__(
         self,
         components: list[str],
