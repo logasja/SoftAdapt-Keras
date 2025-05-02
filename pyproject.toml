@@ -8,6 +8,7 @@ authors = [
   { name="A. Ali Heydari", email="aliheydari@ucdavis.edu"},
   { name="Jacob Logas", email="jacob@logas.me" },
 ]
+version = "0.0.1"
 maintainers = [
   { name="Jacob Logas", email="jacob@logas.me" },
 ]
@@ -28,7 +29,7 @@ keywords=["Physics-Informed Neural Networks", "Balancing PINNs Loss",
                 "Adaptive-Weighting, Multi-Task-Nerual-Networks Optimization",
                 "Gradient-Descent-Weighting, Machine Learning"]
 dependencies = ["findiff", "keras>=3.0.0", "numpy"]
-dynamic = ["version"]
+# dynamic = ["version"]
 
 [project.urls]
 Homepage = "https://github.com/logasja/SoftAdapt-Keras"
