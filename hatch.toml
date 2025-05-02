@@ -1,9 +1,5 @@
 [build.targets.sdist]
-exclude = [
-    "/.github",
-    "/docs",
-    "/tests",
-]
+exclude = ["/.github", "/docs", "/tests", "/scripts"]
 
 [envs.default]
 installer = "uv"
@@ -16,15 +12,19 @@ backend = ["torch", "tensorflow"]
 [envs.hatch-test.overrides]
 matrix.backend.env-vars = "KERAS_BACKEND"
 matrix.backend.extra-dependencies = [
-    {value="torch", if = ["torch"]},
-    {value="tensorflow", if = ["tensorflow"]}
+    { value = "torch", if = [
+        "torch",
+    ] },
+    { value = "tensorflow", if = [
+        "tensorflow",
+    ] },
 ]
 
 [envs.dev]
 installer = "uv"
 extra-dependencies = ["torch", "ruff", "pre-commit"]
 [envs.dev.env-vars]
-KERAS_BACKEND="torch"
+KERAS_BACKEND = "torch"
 
 [envs.docs]
 dependencies = [
@@ -53,3 +53,13 @@ packages = ["src/softadapt"]
 [envs.hatch-static-analysis]
 config-path = "ruff.toml"
 dependencies = ["ruff==0.11.7"]
+
+[envs.coverage]
+detached = true
+dependencies = ["coverage[toml]>=6.2", "lxml"]
+[envs.coverage.scripts]
+combine = "coverage combine {args}"
+report-xml = "coverage xml"
+report-uncovered-html = "coverage html --skip-covered --skip-empty"
+generate-summary = "python scripts/generate_coverage_summary.py"
+write-summary-report = "python scripts/write_coverage_summary_report.py"
