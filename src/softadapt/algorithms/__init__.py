@@ -1,4 +1,3 @@
-# ruff: noqa: F401
 """
 Third level module import for SoftAdapt variants.
 Copyright (C) 2025 Jacob Logas
@@ -17,6 +16,10 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
-from softadapt.algorithms.loss_weighted_variant import LossWeightedSoftAdapt
-from softadapt.algorithms.normalized_slopes_variant import NormalizedSoftAdapt
-from softadapt.algorithms.original_variant import SoftAdapt
+from softadapt.algorithms.loss_weighted_variant import (
+    LossWeightedSoftAdapt as LossWeightedSoftAdapt,
+)
+from softadapt.algorithms.normalized_slopes_variant import (
+    NormalizedSoftAdapt as NormalizedSoftAdapt,
+)
+from softadapt.algorithms.original_variant import SoftAdapt as SoftAdapt

@@ -27,7 +27,19 @@ extra-dependencies = ["torch", "ruff", "pre-commit"]
 KERAS_BACKEND = "torch"
 
 [envs.docs]
-dependencies = ["mkdocs"]
+dependencies = [
+    "mkdocs",
+    "mkdocs-minify-plugin",
+    "mkdocstrings-python",
+    "pygments"
+]
+[envs.docs.env-vars]
+SOURCE_DATE_EPOCH = "1580601600"
+PYTHONUNBUFFERED = "1"
+MKDOCS_CONFIG = "mkdocs.yml"
+[envs.docs.scripts]
+build = "mkdocs build --config-file {env:MKDOCS_CONFIG} --clean --strict {args}"
+serve = "mkdocs serve --config-file {env:MKDOCS_CONFIG} --dev-addr localhost:8000 {args}"
 
 [envs.types]
 installer = "uv"
