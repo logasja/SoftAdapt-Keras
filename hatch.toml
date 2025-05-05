@@ -1,8 +1,8 @@
-[version]
-path = "src/softadapt/__version__.py"
-
 [build.targets.sdist]
 exclude = ["/.github", "/docs", "/tests", "/scripts"]
+
+[version]
+path = "src/softadapt/__version__.py"
 
 [envs.default]
 installer = "uv"
