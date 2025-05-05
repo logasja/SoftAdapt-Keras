@@ -8,6 +8,7 @@ authors = [
   { name = "A. Ali Heydari", email = "aliheydari@ucdavis.edu" },
   { name = "Jacob Logas", email = "jacob@logas.me" },
 ]
+dynamic = ["version"]
 maintainers = [{ name = "Jacob Logas", email = "jacob@logas.me" }]
 description = "SoftAdapt: Techniques for Adaptive Loss Weighting of Neural Networks with Multi-Part Loss Functions implemented in Keras"
 readme = "README.md"
