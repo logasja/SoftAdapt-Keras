@@ -12,9 +12,9 @@ jobs:
       uses: lewagon/wait-on-check-action@v1.3.4
       with:
         ref: ${{ github.ref }}
-        check-name: 'Decide whether the needed jobs succeeded or failed'
+        check-name: 'Check tests successful'
         repo-token: ${{ secrets.GITHUB_TOKEN }}
-        wait-interval: 10
+        wait-interval: 60
     - uses: actions/checkout@v4
       with:
         persist-credentials: false
