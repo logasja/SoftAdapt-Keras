@@ -89,21 +89,10 @@ jobs:
     - name: Write coverage summary report
       run: hatch run coverage:write-summary-report
 
-    - name: Update coverage summary comment
-      id: md
-      uses: mediatech15/markdown-to-summary-action@v1.1
-      with:
-        file: 'coverage-report.md'
-        check_name: md
-        conclusion: success
-
-    - name: Update coverage summary comment
-      id: md2
-      uses: mediatech15/markdown-to-summary-action@v1.1
-      with:
-        file: 'coverage.md'
-        check_name: md
-        conclusion: success
+    - name: Write to Summary
+      run: |
+        cat coverage-report.md >> $GITHUB_STEP_SUMMARY
+        cat coverage.md >> $GITHUB_STEP_SUMMARY
 
   # https://github.com/marketplace/actions/alls-green#why
   check: # This job does nothing and is only used for the branch protection
