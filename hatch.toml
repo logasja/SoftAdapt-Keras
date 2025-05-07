@@ -2,7 +2,10 @@
 exclude = ["/.github", "/docs", "/tests", "/scripts"]
 
 [version]
+source = "regex_commit"
 path = "src/softadapt/__version__.py"
+commit_message = "🚀 Version {new_version}"
+commit_extra_args = ["-e"]
 
 [envs.default]
 installer = "uv"
@@ -25,7 +28,7 @@ matrix.backend.extra-dependencies = [
 
 [envs.dev]
 installer = "uv"
-extra-dependencies = ["torch", "ruff", "pre-commit"]
+extra-dependencies = ["torch", "ruff", "pre-commit", "hatch-regex-commit"]
 [envs.dev.env-vars]
 KERAS_BACKEND = "torch"
 
