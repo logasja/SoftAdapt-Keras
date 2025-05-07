@@ -75,6 +75,7 @@ jobs:
       run: |
         hatch run coverage:report-xml
         hatch run coverage:report-uncovered-html
+        hatch run coverage:report-md
 
     - name: Upload uncovered HTML report
       uses: actions/upload-artifact@v4
@@ -86,14 +87,23 @@ jobs:
       run: hatch run coverage:generate-summary
 
     - name: Write coverage summary report
-      if: github.event_name == 'pull_request'
       run: hatch run coverage:write-summary-report
 
-    - name: Update coverage pull request comment
-      if: github.event_name == 'pull_request' && !github.event.pull_request.head.repo.fork
-      uses: marocchino/sticky-pull-request-comment@v2
+    - name: Update coverage summary comment
+      id: md
+      uses: mediatech15/markdown-to-summary-action@v1.1
       with:
-        path: coverage-report.md
+        file: 'coverage-report.md'
+        check_name: md
+        conclusion: success
+
+    - name: Update coverage summary comment
+      id: md2
+      uses: mediatech15/markdown-to-summary-action@v1.1
+      with:
+        file: 'coverage.md'
+        check_name: md
+        conclusion: success
 
   # https://github.com/marketplace/actions/alls-green#why
   check: # This job does nothing and is only used for the branch protection
