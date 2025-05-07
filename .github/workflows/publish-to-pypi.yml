@@ -30,11 +30,17 @@ jobs:
       with:
         name: python-package-distributions
         path: dist/
+    
+    - name: Show variables
+      run: |
+        echo ${{ github.event.workflow_run.head_branch }} >> $GITHUB_STEP_SUMMARY
+        echo ${{ github.event.workflow_run }} >> $GITHUB_STEP_SUMMARY
+        echo ${{ github }} >> $GITHUB_STEP_SUMMARY
 
   publish-to-pypi:
     name: >-
       Publish Python 🐍 distribution 📦 to PyPI
-    if: startsWith(github.event.workflow_run.head_branch, 'refs/tags/')  # only publish to PyPI on tag pushes
+    if: startsWith(${{ github.event.workflow_run.head_branch }}, 'refs/tags/')  # only publish to PyPI on tag pushes
     needs:
     - build
     runs-on: ubuntu-latest
